@@ -34,4 +34,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ben2303/gamevault-backend:tagname:unstable
+            ben2303/gamevault-backend:unstable
