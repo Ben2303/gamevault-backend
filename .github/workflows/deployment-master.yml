@@ -3,7 +3,7 @@ name: Build and Deploy for Master
 on:
   push:
     branches:
-      - master
+      - release
 
 jobs:
   docker:
@@ -13,11 +13,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      - uses: sonarsource/sonarqube-scan-action@master
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         
       - name: Fetch Current Package Version
         id: package-version
@@ -32,37 +27,15 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: phalcode
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: phalcode
-          password: ${{ secrets.GITHUB_TOKEN }}
-          
+          username: ${{ secrets.DOCKERHUB_USER }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+                    
       - name: Build and Push
         uses: docker/build-push-action@v4
         with:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            phalcode/gamevault-backend:latest
-            phalcode/gamevault-backend:${{steps.package-version.outputs.current-version}}
-            ghcr.io/phalcode/gamevault-backend:latest
-            ghcr.io/phalcode/gamevault-backend:${{steps.package-version.outputs.current-version}}
+            ben2303/gamevault-backend:latest
+            ben2303/gamevault-backend:${{steps.package-version.outputs.current-version}}
       
-      - name: Create Github Tag & Release
-        id: release
-        uses: CupOfTea696/gh-action-auto-release@v1.0.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Discord notification
-        id: discord
-        uses: Ilshidur/action-discord@master
-        env:
-          DISCORD_WEBHOOK: ${{ secrets.DISCORD_RELEASE_BOT_WEBHOOK }}
-        with:
-          args: '<@&1128857090090340382> New Release: {{ EVENT_PAYLOAD.repository.full_name }} v${{steps.package-version.outputs.current-version}} has been deployed. Here are the changes: https://github.com/{{EVENT_PAYLOAD.repository.full_name}}/releases/latest'
