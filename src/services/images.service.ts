@@ -9,7 +9,7 @@ import { Repository } from "typeorm";
 import { Image } from "../database/entities/image.entity";
 import * as fs from "fs";
 import configuration from "../configuration";
-import sharp from "sharp";
+// import sharp from "sharp"; // REMOVED FOR NON AVX CPU
 import logger from "../logging";
 import { GamevaultUser } from "../database/entities/gamevault-user.entity";
 import { Game } from "../database/entities/game.entity";
@@ -148,13 +148,14 @@ export class ImagesService {
       const imageBuffer = Buffer.from(response.data);
 
       // Compress Image
-      this.logger.debug(`Compressing image from '${image.source}'...`);
-      const compressedImageBuffer = await sharp(imageBuffer).toBuffer();
+      // this.logger.debug(`Compressing image from '${image.source}'...`); // REMOVED FOR NON AVX CPU
+      // const compressedImageBuffer = await sharp(imageBuffer).toBuffer(); // REMOVED FOR NON AVX CPU
 
       // Save the Image
       this.logger.debug(`Saving image from '${image.source}'...`);
       if (!configuration.TESTING.MOCK_FILES) {
-        fs.writeFileSync(image.path, compressedImageBuffer);
+        // fs.writeFileSync(image.path, compressedImageBuffer); // REMOVED FOR NON AVX CPU
+        fs.writeFileSync(image.path, imageBuffer);
         this.logger.debug(
           `Saved image from '${image.source} to '${image.path}'`,
         );
