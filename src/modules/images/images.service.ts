@@ -11,7 +11,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Image } from "./image.entity";
 import configuration from "../../configuration";
-import sharp from "sharp";
+//import sharp from "sharp";
 import { HttpService } from "@nestjs/axios";
 import { catchError, firstValueFrom } from "rxjs";
 import { AxiosError, AxiosResponse } from "axios";
@@ -130,9 +130,9 @@ export class ImagesService {
       );
       return;
     }
-    this.logger.debug(`Compressing image...`);
-    const compressedImageBuffer = await sharp(imageBuffer).toBuffer();
-    writeFileSync(path, compressedImageBuffer);
+    this.logger.debug(`NOT compressing image :)...`);
+//    const imageBuffer = await sharp(imageBuffer).toBuffer();
+    writeFileSync(path, imageBuffer);
     this.logger.debug(`Saved image to '${path}'`);
   }
 

@@ -94,6 +94,7 @@ async function bootstrap(): Promise<void> {
           )
           .setVersion(configuration.SERVER.VERSION)
           .addBasicAuth()
+					.addServer(`http://diskstation:8686`, "Custom GameVault Server")
           .addServer(
             `http://localhost:${configuration.SERVER.PORT}`,
             "Local GameVault Server",
